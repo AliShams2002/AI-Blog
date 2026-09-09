@@ -1,6 +1,7 @@
 "use client";
 import Header from "@/components/admin/Header";
 import Sidebar from "@/components/admin/Sidebar";
+import SpinnerLoading from "@/components/shared/SpinnerLoading";
 import { useAuth } from "@/context/AuthContext";
 import {
   FileText,
@@ -10,11 +11,11 @@ import {
   Users,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const LayoutContent = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const pathName = usePathname();
 
   // Sidebar menu items
@@ -51,6 +52,13 @@ const LayoutContent = ({ children }) => {
     return foundItem ? foundItem.id : "dashboard";
   }, [pathName, menuItems]);
 
+  if (isLoading)
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <SpinnerLoading width="v-6" height="h-6" />
+      </div>
+    );
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-x-scroll hide-scrollbar">
       <div className="flex min-h-screen">
@@ -60,7 +68,6 @@ const LayoutContent = ({ children }) => {
           setSidebarCollapsed={setSidebarCollapsed}
           menuItems={menuItems}
           activeTab={activeTab}
-          // setActiveTab={setActiveTab}
           logout={logout}
         />
 

@@ -2,7 +2,6 @@
 "use client";
 import { addComment } from "@/app/admin/comments/_partials/action";
 import { useAuth } from "@/context/AuthContext";
-import { useCategories } from "@/context/CategoriesContext";
 import React, { useCallback, useMemo, useState, useTransition } from "react";
 import toast from "react-hot-toast";
 
@@ -16,7 +15,6 @@ export function UseBlogPageManager(
   const [comments, setComments] = useState(initialComments);
   const [newComment, setNewComment] = useState("");
   const [isPending, startTransition] = useTransition();
-  const { getCategoryName } = useCategories();
   const { isAuthenticated } = useAuth();
 
   // Get up to 3 related/suggested blogs excluding the current one
@@ -79,6 +77,5 @@ export function UseBlogPageManager(
     newComment,
     isPending,
     comments,
-    getCategoryName,
   };
 }

@@ -4,10 +4,10 @@ import React from "react";
 import Categories from "./Categories";
 import { useHomePageManager } from "@/hooks/useHomePageManager";
 import Blogs from "./Blogs";
+import { getCategoriesWithAll } from "@/utils/categoriesHelper";
 
-const HomeClient = ({ data: initialBlogs }) => {
+const HomeClient = ({ initialBlogs, initialCategories }) => {
   const {
-    catsWithAllOption,
     handleSearchFilter,
     handleActiveFilter,
     filteredAndSortedPosts,
@@ -28,7 +28,7 @@ const HomeClient = ({ data: initialBlogs }) => {
     <>
       {/* Advanced section */}
       <Categories
-        initialCategories={catsWithAllOption}
+        initialCategories={getCategoriesWithAll(initialCategories)}
         filteredBlogs={filteredAndSortedPosts}
         setActiveFilter={handleActiveFilter}
         activeFilter={modalState.activeFilter}
@@ -40,6 +40,7 @@ const HomeClient = ({ data: initialBlogs }) => {
 
       {/* Blogs grid */}
       <Blogs
+        initialCategories={initialCategories}
         getCatById={getCategoryName}
         featuredBlog={modalState.featuredBlog}
         activeFilter={modalState.activeFilter}

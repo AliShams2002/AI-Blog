@@ -6,7 +6,6 @@ import { useDashboardManager } from "@/hooks/useDashboardManager";
 
 const DashboardClient = ({ blogs, categories, comments, users }) => {
   const {
-    getBlogName,
     statsCards,
     getRoleColor,
     getRoleText,
@@ -24,11 +23,11 @@ const DashboardClient = ({ blogs, categories, comments, users }) => {
 
       {/* Recent Activity Sections */}
       <RecentActivity
-        blogs={recentBlogs}
+        blogs={blogs}
+        recentBlogs={recentBlogs}
         comments={recentComments}
         categories={recentCategories}
         users={recentUsers}
-        getBlogName={getBlogName}
         getRoleColor={getRoleColor}
         getRoleText={getRoleText}
       />

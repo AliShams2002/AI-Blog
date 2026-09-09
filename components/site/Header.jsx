@@ -4,7 +4,7 @@ import { LayoutDashboard, LogOut, MenuIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import MobileMenu from "./MobileMenu";
-import { getAuthCookies } from "@/app/login/_partials/action";
+import { getAuthCookies } from "@/app/(site)/login/_partials/action";
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();

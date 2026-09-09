@@ -1,4 +1,5 @@
 import RecentActivitycard from "@/components/admin/RecentActivitycard";
+import { blogNameHelper } from "@/utils/blogNameHelper";
 import { formatToSolarDate } from "@/utils/FormatDate";
 import {
   FileText,
@@ -13,10 +14,10 @@ import React from "react";
 
 const RecentActivity = ({
   blogs,
+  recentBlogs,
   comments,
   categories,
   users,
-  getBlogName,
   getRoleColor,
   getRoleText,
 }) => {
@@ -29,7 +30,7 @@ const RecentActivity = ({
         href="/admin/blogs"
       >
         {/* Display last 3 blogs */}
-        {blogs.slice(0, 3).map((blog) => (
+        {recentBlogs.slice(0, 3).map((blog) => (
           <div
             key={blog.id}
             className="flex items-start gap-3 p-2 hover:bg-gray-700/30 rounded-lg transition-colors"
@@ -79,7 +80,7 @@ const RecentActivity = ({
               {comment.content}
             </p>
             <p className="text-xs text-purple-400 mt-1 line-clamp-1">
-              مقاله: {getBlogName(comment.articleId)}
+              مقاله: {blogNameHelper(blogs, comment.articleId)}
             </p>
           </div>
         ))}

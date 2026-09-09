@@ -1,43 +1,53 @@
 import { NextResponse } from "next/server";
+import { getUserProfile } from "./services/UserService";
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Get cookies from the request
   const token = request.cookies.get("token")?.value;
-  const userCookie = request.cookies.get("user")?.value;
 
-  let user = null;
-  try {
-    user = userCookie ? JSON.parse(userCookie) : null;
-  } catch (error) {
-    console.error("Error parsing user:", error);
-  }
-
-  const isAuthenticated = !!token;
-  const isAdmin = user?.role === "admin";
-
-  // 1. If user is on login page and already authenticated, redirect to appropriate page
+  // Handle login page - redirect authenticated users
   if (pathname === "/login") {
-    if (isAuthenticated) {
-      const redirectUrl = isAdmin ? "/admin/dashboard" : "/";
-      return NextResponse.redirect(new URL(redirectUrl, request.url));
+    // Not authenticated → allow access to login page
+    if (!token) {
+      return NextResponse.next();
     }
-    return NextResponse.next();
+
+    // Token exists → verify user profile
+    const result = await getUserProfile();
+
+    // Invalid/expired token → allow access to login page
+    if (!result.success) {
+      return NextResponse.next();
+    }
+
+    // User is already logged in → redirect to appropriate page based on role
+    const user = result.data;
+
+    const redirectUrl = user.role === "admin" ? "/admin/dashboard" : "/";
+
+    return NextResponse.redirect(new URL(redirectUrl, request.url));
   }
 
-  // 2. Protect admin routes - require authentication and admin role
-  if (pathname.startsWith("/admin")) {
-    if (!isAuthenticated) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    if (!isAdmin) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-    return NextResponse.next();
+  // Protect admin routes
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // 3. Public routes - no checks needed
+  // Verify user profile for admin access
+  const result = await getUserProfile();
+
+  if (!result.success) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  const user = result.data;
+
+  // Only allow admin users to access admin routes
+  if (user.role !== "admin") {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   return NextResponse.next();
 }
 

@@ -2,19 +2,44 @@ import React from "react";
 import { getAllBlogs, getBlogById } from "@/services/BlogService";
 import BlogClient from "./_partials/BlogClient";
 import { getCommentsByBlogId } from "@/services/CommentService";
+import ErrorDisplay from "@/components/shared/ErrorDisplay";
+import { getAllCategories } from "@/services/CategorieService";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
   const { data: blog } = await getBlogById(id);
 
+  // Return 404 metadata if blog not found
   if (!blog) {
     return {
-      title: "مقاله یافت نشد",
+      title: "مقاله یافت نشد | وبلاگ من",
       description: "متأسفیم، مقاله مورد نظر شما پیدا نشد",
+      robots: { index: false, follow: false },
     };
   }
 
-  // ساخت متادیتا بر اساس مقاله
+  // Generates a clean excerpt from HTML content for meta description
+  const generateExcerpt = (content, maxLength = 155) => {
+    if (!content) return `مطالعه مقاله کامل ${blog.title} در وبلاگ من`;
+
+    // Remove HTML tags and extra whitespace
+    const plainText = content
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    // Return full text if shorter than max length
+    if (plainText.length <= maxLength) return plainText;
+
+    // Smart truncation on complete words
+    const truncated = plainText.slice(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(" ");
+    return truncated.slice(0, lastSpace) + "...";
+  };
+
+  const excerpt = generateExcerpt(blog.content);
+
+  // Build metadata based on blog article
   const title = `${blog.title} | وبلاگ من`;
   const description =
     blog.content ||
@@ -25,13 +50,13 @@ export async function generateMetadata({ params }) {
 
   return {
     title: title,
-    description: description,
+    description: excerpt,
     keywords: keywords,
     authors: [{ name: blog.author || "وبلاگ من" }],
     openGraph: {
       title: title,
       description: description,
-      url: `https://example.com/blog/${id}`,
+      url: `https://my-blog-ochre-sigma-12.vercel.app/${id}`,
       siteName: "وبلاگ من",
       images: [
         {
@@ -55,7 +80,7 @@ export async function generateMetadata({ params }) {
       images: [blog.image || "/og-image-default.jpg"],
     },
     alternates: {
-      canonical: `https://example.com/blog/${id}`,
+      canonical: `https://my-blog-ochre-sigma-12.vercel.app/${id}`,
     },
     robots: {
       index: true,
@@ -79,18 +104,21 @@ const Blog = async ({ params }) => {
   const { id } = await params;
 
   // Fetch all blogs & single blog by id & comments of blog
-  const [{ data: allBlogs }, { data: blogDetails }, { data: comments }] =
-    await Promise.all([
-      getAllBlogs(),
-      getBlogById(id),
-      getCommentsByBlogId(id),
-    ]);
+  const [allBlogs, blogDetails, comments, categories] = await Promise.all([
+    getAllBlogs(),
+    getBlogById(id),
+    getCommentsByBlogId(id),
+    getAllCategories(),
+  ]);
+
+  if (!blogDetails.success) return <ErrorDisplay error={blogDetails.error} />;
 
   return (
     <BlogClient
-      initialBlogDetails={blogDetails}
-      initialBlogs={allBlogs}
-      initialComments={comments}
+      initialBlogDetails={blogDetails.data}
+      initialBlogs={allBlogs.data}
+      initialComments={comments.data}
+      initialCategories={categories.data}
     />
   );
 };

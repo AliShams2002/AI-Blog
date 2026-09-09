@@ -5,11 +5,10 @@ import {
   editBlog,
   removeBlog,
 } from "@/app/admin/blogs/_partials/action";
-import { useCategories } from "@/context/CategoriesContext";
 import { confirmModal } from "@/utils/confirmModal";
 import { blogSchema } from "@/utils/FormValidation";
 import { recentData } from "@/utils/recentHelpers";
-import { useState, useTransition, useCallback, useMemo, useEffect } from "react";
+import { useState, useTransition, useCallback, useMemo } from "react";
 import toast from "react-hot-toast";
 
 // Centralized toast message configuration

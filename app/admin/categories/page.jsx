@@ -11,11 +11,11 @@ export const dynamic = "force-dynamic";
 
 const Page = async () => {
   // Fetch all categories
-  const { data: categories } = await getAllCategories();
+  const categories = await getAllCategories();
 
   // Fetch blog count for each category in parallel
   const categoriesWithCount = await Promise.all(
-    categories.map(async (category) => {
+    categories.data.map(async (category) => {
       try {
         const { data: articles } = await getBlogRelatedOfCategory(category.id);
         return {
@@ -29,7 +29,12 @@ const Page = async () => {
   );
 
   // Show skeleton loading if categories data is not available
-  if (!categories) return <Skeleton type="card" />;
+  if (!categories.data) return <Skeleton type="card" />;
+
+  // Show error component if categories success is not available
+  if (!categories.success) {
+    return <ErrorDisplay error={categories.error} />;
+  }
 
   return <CategoriesClient categories={categoriesWithCount} />;
 };

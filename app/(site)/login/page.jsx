@@ -1,12 +1,13 @@
 "use client";
 
 import SpinnerLoading from "@/components/shared/SpinnerLoading";
-import React, { useEffect } from "react";
+import React from "react";
 import { Lock, ArrowRight, Sparkles, User } from "lucide-react";
 import { useLoginManager } from "@/hooks/useLoginManager";
 
 const Login = () => {
-  const { handleSubmit, register, isSubmitting, errors } = useLoginManager();
+  const { handleSubmit, register, isSubmitting, errors, isLoadingState } =
+    useLoginManager();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4">
@@ -78,16 +79,13 @@ const Login = () => {
                 <button
                   type="submit"
                   className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-purple-500/30 flex items-center justify-center gap-2 group cursor-pointer"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isLoadingState}
                 >
-                  <span>
-                    {isSubmitting ? (
-                      <SpinnerLoading width="v-6" height="h-6" />
-                    ) : (
-                      "ورود"
-                    )}
-                  </span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  {isSubmitting || isLoadingState ? (
+                    <SpinnerLoading width="v-6" height="h-6" />
+                  ) : (
+                    <span>ورود</span>
+                  )}
                 </button>
               </form>
             </div>

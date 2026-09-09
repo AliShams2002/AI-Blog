@@ -1,4 +1,3 @@
-import { getAllCategories } from "@/services/CategorieService";
 import { z } from "zod";
 
 // Password strength validation helper
@@ -41,7 +40,7 @@ export const commentSchema = z.object({
   content: z
     .string()
     .min(5, "محتوا حداقل 5 کاراکتر")
-    .max(150, "محتوا حداقل 150 کاراکتر"),
+    .max(150, "محتوا حداکثر 150 کاراکتر"),
 });
 
 // Category validation schema
@@ -49,11 +48,11 @@ export const categorieSchema = z.object({
   title: z
     .string()
     .min(5, "عنوان حداقل 5 کاراکتر")
-    .max(15, "عنوان حداقل 15 کاراکتر"),
+    .max(15, "عنوان حداکثر 15 کاراکتر"),
   description: z
     .string()
     .min(5, "توضیحات حداقل 5 کاراکتر")
-    .max(50, "توضیحات حداقل 50 کاراکتر"),
+    .max(50, "توضیحات حداکثر 50 کاراکتر"),
 });
 
 // User validation schema

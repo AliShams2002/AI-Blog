@@ -5,12 +5,9 @@ import {
   UserCheck,
   FolderOpen,
 } from "lucide-react";
-import { useBlog } from "@/context/BlogContext";
 import { recentData } from "@/utils/recentHelpers";
 
 export function useDashboardManager({ blogs, comments, categories, users }) {
-  const { getBlogName } = useBlog();
-
   // Dashboard statistics cards configuration
   const statsCards = [
     {
@@ -73,7 +70,6 @@ export function useDashboardManager({ blogs, comments, categories, users }) {
   const recentUsers = recentData(users);
 
   return {
-    getBlogName,
     statsCards,
     getRoleColor,
     getRoleText,

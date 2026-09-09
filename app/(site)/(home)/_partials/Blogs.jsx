@@ -16,8 +16,10 @@ import ReadingTime from "@/utils/ReadingTime";
 import { formatToSolarDate } from "@/utils/FormatDate";
 import BlogCard from "@/components/shared/BlogCard";
 import Image from "next/image";
+import { getCategoryName } from "@/utils/categoriesHelper";
 
 const Blogs = ({
+  initialCategories,
   getCatById,
   featuredBlog,
   filteredBlogs,
@@ -77,7 +79,10 @@ const Blogs = ({
                   <div className="flex items-center justify-between">
                     <div className="flex flex-wrap gap-2">
                       <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-lg">
-                        {getCatById(featuredBlog.categoryId)}
+                        {getCategoryName(
+                          initialCategories,
+                          featuredBlog.categoryId,
+                        )}
                       </span>
                     </div>
                     <span className="inline-flex items-center gap-1 text-purple-600 dark:text-purple-400 font-medium group-hover:gap-2 transition-all">
@@ -127,7 +132,7 @@ const Blogs = ({
                 <BlogCard
                   key={article.id}
                   article={article}
-                  getCatById={getCatById}
+                  categories={initialCategories}
                 />
               ))}
             </div>

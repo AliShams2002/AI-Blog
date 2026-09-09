@@ -4,7 +4,7 @@ import React from "react";
 import FormModal from "@/components/admin/FormModal";
 import { useCommentManager } from "@/hooks/useCommentManager";
 
-const CommentClient = ({ comments: initialComments }) => {
+const CommentClient = ({ comments: initialComments, blogs: initialBlogs }) => {
   // Initialize comment management hook with initial data
   const {
     comments,
@@ -42,6 +42,7 @@ const CommentClient = ({ comments: initialComments }) => {
       <ReusableTable
         columns={columns}
         data={comments}
+        blogs={initialBlogs}
         title="مديريت مقالات"
         searchPlaceholder="جستجو براساس عنوان, نویسنده و متن نظر"
         onView

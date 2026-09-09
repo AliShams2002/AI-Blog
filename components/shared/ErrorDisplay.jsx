@@ -40,7 +40,7 @@ export default function ErrorDisplay({ error }) {
   const action = getAction();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[300px] p-6 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
       {/* Error icon */}
       <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
         <AlertTriangle className="w-10 h-10 text-red-500" />

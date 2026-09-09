@@ -1,60 +1,66 @@
 "use client";
 
-import { useState, createContext, useEffect, useContext } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import {
-  getAuthCookies,
-  handleDeleteCookies,
-} from "@/app/login/_partials/action";
+  getCurrentUserAction,
+  logoutAction,
+} from "@/app/(site)/login/_partials/action";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Loading user data
   useEffect(() => {
-    setIsLoading(true);
     const loadUser = async () => {
-      const result = await getAuthCookies();
-      const savedToken = result.token;
-      const savedUser = result.user;
-      if (savedUser) setUser(savedUser);
-      if (savedToken) setToken(savedToken);
+      try {
+        setIsLoading(true);
+
+        const result = await getCurrentUserAction();
+
+        if (result.success && result.data) {
+          setUser(result.data);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Failed to load user:", error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
     };
     loadUser();
-    setIsLoading(false);
   }, []);
 
   // Login
-  const login = async ({ userData, accessToken }) => {
+  const login = async ({ userData }) => {
     setUser(userData);
-    setToken(accessToken);
   };
 
   // Logout
   const logout = async () => {
-    await handleDeleteCookies();
-    setUser(null);
-    setToken(null);
-    toast.success("عملیات خروج با موفقیت انجام شد");
-    router.replace("/");
+    const result = await logoutAction();
+    if (result.success) {
+      setUser(null);
+      toast.success("عملیات خروج با موفقیت انجام شد");
+      router.replace("/");
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
         login,
         logout,
         isLoading,
         setIsLoading,
-        isAuthenticated: !!token,
+        isAuthenticated: !!user,
       }}
     >
       {children}
@@ -65,8 +71,9 @@ export function AuthProvider({ children }) {
 // Custom hook to use auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
+
   if (!context) {
-    throw new Error("useAuth must be used within an AppProvider");
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

@@ -1,7 +1,6 @@
 "use client";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { useDebounce } from "./useDebound";
-import { useCategories } from "@/context/CategoriesContext";
 
 export function useHomePageManager(initialBlogs) {
   const [modalState, setmodalState] = useState({
@@ -16,9 +15,6 @@ export function useHomePageManager(initialBlogs) {
   const [currentPage, setCurrentPage] = useState(1);
   const debouncedSearch = useDebounce(modalState.searchTerm, 1000);
   const debouncedFilter = useDebounce(modalState.activeFilter, 800);
-
-  const { getCategoriesWithAll, getCategoryName } = useCategories();
-  const catsWithAllOption = getCategoriesWithAll();
 
   // Simulate loading state when search, filter, or sort changes
   useEffect(() => {
@@ -126,7 +122,6 @@ export function useHomePageManager(initialBlogs) {
   }, []);
 
   return {
-    catsWithAllOption,
     handleSearchFilter,
     handleActiveFilter,
     filteredAndSortedPosts,
@@ -135,7 +130,6 @@ export function useHomePageManager(initialBlogs) {
     setSortBy,
     sortBy,
     modalState,
-    getCategoryName,
     totalPages,
     paginatedBlogs,
     resetFilter,

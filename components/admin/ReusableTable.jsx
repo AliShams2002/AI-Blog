@@ -8,6 +8,8 @@ import { useTableManager } from "@/hooks/useTableManager";
 const ReusableTable = ({
   columns,
   data,
+  blogs,
+  categories,
   title,
   showSearch = true,
   showFilter = true,
@@ -37,7 +39,7 @@ const ReusableTable = ({
     paginatedData,
     goToPage,
     renderCell,
-  } = useTableManager(data, itemsPerPage);
+  } = useTableManager({ data, itemsPerPage, blogs, categories });
 
   return (
     <div

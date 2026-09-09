@@ -15,8 +15,14 @@ import ReadingTime from "@/utils/ReadingTime";
 import SpinnerLoading from "@/components/shared/SpinnerLoading";
 import { UseBlogPageManager } from "@/hooks/useBlogPageManager";
 import Image from "next/image";
+import { getCategoryName } from "@/utils/categoriesHelper";
 
-const BlogClient = ({ initialBlogDetails, initialBlogs, initialComments }) => {
+const BlogClient = ({
+  initialBlogDetails,
+  initialBlogs,
+  initialComments,
+  initialCategories,
+}) => {
   const {
     suggestedBlogs,
     handleSubmit,
@@ -24,7 +30,6 @@ const BlogClient = ({ initialBlogDetails, initialBlogs, initialComments }) => {
     newComment,
     isPending,
     comments,
-    getCategoryName,
   } = UseBlogPageManager(initialBlogDetails, initialBlogs, initialComments);
 
   useEffect(() => {
@@ -47,11 +52,6 @@ const BlogClient = ({ initialBlogDetails, initialBlogs, initialComments }) => {
         </Link>
 
         <div className="absolute inset-0">
-          {/* <img
-            src={initialBlogDetails.image}
-            alt={initialBlogDetails.title}
-            className="w-full h-full object-cover"
-          /> */}
           <Image
             src={`${process.env.NEXT_PUBLIC_BASE_URL}${initialBlogDetails.image}`}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -133,7 +133,10 @@ const BlogClient = ({ initialBlogDetails, initialBlogs, initialComments }) => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-gray-800/50 border border-gray-700 rounded-full text-sm text-gray-300 hover:bg-purple-600/50 hover:border-purple-500 transition-all duration-300 cursor-pointer">
-                    {getCategoryName(initialBlogDetails.categoryId)}
+                    {getCategoryName(
+                      initialCategories,
+                      initialBlogDetails.categoryId,
+                    )}
                   </span>
                 </div>
               </div>
@@ -159,7 +162,7 @@ const BlogClient = ({ initialBlogDetails, initialBlogs, initialComments }) => {
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="mt-3 px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-3 px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     {!isPending ? (
                       "ارسال نظر"

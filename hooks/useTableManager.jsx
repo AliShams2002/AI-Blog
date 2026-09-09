@@ -1,20 +1,25 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useDebounce } from "./useDebound";
-import { useCategories } from "@/context/CategoriesContext";
-import { useBlog } from "@/context/BlogContext";
 import { handelSearch } from "@/utils/searchLib";
 import { formatToSolarDate } from "@/utils/FormatDate";
 import Image from "next/image";
+import { blogNameHelper } from "@/utils/blogNameHelper";
+import { getCategoryName } from "@/utils/categoriesHelper";
 
-export function useTableManager(data, itemsPerPage) {
+export function useTableManager({
+  data,
+  itemsPerPage,
+  blogs = [],
+  categories = [],
+}) {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const debouncedSearch = useDebounce(searchTerm, 500);
   const debouncedFilter = useDebounce(activeFilter, 300);
-  const { getCategoryName } = useCategories();
-  const { getBlogName } = useBlog();
+  // const { getCategoryName } = useCategories();
+  // const { getBlogName } = useBlog();
   const isFirstRender = useRef(true);
 
   // Filter data based on search term and active filter
@@ -70,48 +75,45 @@ export function useTableManager(data, itemsPerPage) {
   );
 
   // Renders cell content based on column configuration
-  const renderCell = useCallback(
-    (item, column) => {
-      const value = item[column.key];
+  const renderCell = useCallback((item, column) => {
+    const value = item[column.key];
 
-      // Use custom render function if provided
-      if (column.render) {
-        return column.render(value, item);
-      }
+    // Use custom render function if provided
+    if (column.render) {
+      return column.render(value, item);
+    }
 
-      // Handle image column with Next.js Image component
-      if (column.key === "image") {
-        return (
-          <Image
-            src={`${process.env.NEXT_PUBLIC_BASE_URL}${value}`}
-            className="rounded-xl"
-            width={50}
-            height={50}
-            quality={80}
-            alt=""
-          />
-        );
-      }
+    // Handle image column with Next.js Image component
+    if (column.key === "image") {
+      return (
+        <Image
+          src={`${process.env.NEXT_PUBLIC_BASE_URL}${value}`}
+          className="rounded-xl"
+          width={50}
+          height={50}
+          quality={80}
+          alt=""
+        />
+      );
+    }
 
-      // Format date column
-      if (column.key === "createdAt") {
-        return formatToSolarDate(value);
-      }
+    // Format date column
+    if (column.key === "createdAt") {
+      return formatToSolarDate(value);
+    }
 
-      // Convert category ID to category name
-      if (column.key === "categoryId") {
-        return getCategoryName(value);
-      }
+    // Convert category ID to category name
+    if (column.key === "categoryId") {
+      return getCategoryName(categories, value);
+    }
 
-      // Convert article ID to article/blog name
-      if (column.key === "articleId") {
-        return getBlogName(value);
-      }
+    // Convert article ID to article/blog name
+    if (column.key === "articleId") {
+      return blogNameHelper(blogs, value);
+    }
 
-      return value;
-    },
-    [getCategoryName, getBlogName],
-  );
+    return value;
+  }, []);
 
   return {
     searchTerm,

@@ -74,6 +74,7 @@ const BlogClient = ({ blogs: initialBlogs, categories }) => {
       <ReusableTable
         columns={columns}
         data={blogs}
+        categories={categories}
         selectBoxData={categories}
         title="مديريت مقالات"
         searchPlaceholder="جستجو براساس عنوان و نویسنده"

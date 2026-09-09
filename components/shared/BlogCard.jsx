@@ -1,3 +1,4 @@
+import { getCategoryName } from "@/utils/categoriesHelper";
 import { formatToSolarDate } from "@/utils/FormatDate";
 import ReadingTime from "@/utils/ReadingTime";
 import {
@@ -13,7 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const BlogCard = ({ article, getCatById }) => {
+const BlogCard = ({ article, categories }) => {
   return (
     article && (
       <article className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
@@ -63,7 +64,7 @@ const BlogCard = ({ article, getCatById }) => {
           {/* category */}
           <div className="flex flex-wrap gap-1 mb-3">
             <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded">
-              {getCatById(article.categoryId)}
+              {getCategoryName(categories, article.categoryId)}
             </span>
           </div>
 

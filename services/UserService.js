@@ -62,6 +62,36 @@ export const getAllUsers = async () => {
   }
 };
 
+// get user profile
+export const getUserProfile = async () => {
+  try {
+    const result = await serverFetcher("/api/auth/profile");
+    if (!result.success) {
+      console.error("Error retrieving users profile:", result.error);
+      return {
+        success: false,
+        data: [],
+        error: result.error,
+      };
+    }
+
+    return {
+      success: true,
+      data: result.data || [],
+    };
+  } catch (error) {
+    console.error("Unexpected error in getUserProfile:", error);
+    return {
+      success: false,
+      data: [],
+      error: {
+        message: "خطا در دریافت اطلاعات پروفایل",
+        type: "SERVER_ERROR",
+      },
+    };
+  }
+};
+
 // Create a new user (register)
 export const createUser = async (params) => {
   try {
